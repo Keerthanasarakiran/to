@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --gray: #adb5bd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        
+        .task-form {
+            display: flex;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-form input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--gray);
+            border-radius: 8px 0 0 8px;
+            outline: none;
+        }
+        
+        .task-form input:focus {
+            border-color: var(--accent);
+        }
+        
+        .task-form button {
+            padding: 0 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .task-form button:hover {
+            background: var(--secondary);
+        }
+        
+        .task-list {
+            list-style: none;
+        }
+        
+        .task-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .task-item:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .task-content {
+            flex: 1;
+            padding: 0 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .completed .task-content {
+            color: var(--gray);
+            text-decoration: line-through;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .task-actions a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .complete-btn {
+            background: var(--success);
+        }
+        
+        .complete-btn:hover {
+            background: #3aa8d8;
+            transform: scale(1.1);
+        }
+        
+        .delete-btn {
+            background: var(--danger);
+        }
+        
+        .delete-btn:hover {
+            background: #e5177e;
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .task-form {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .task-form input,
+            .task-form button {
+                width: 100%;
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My To-Do List</h1>
+        </header>
+        
+        <form class="task-form" action="/add" method="POST">
+            <input type="text" name="content" placeholder="What needs to be done?" required>
+            <button type="submit" class="pulse">Add Task</button>
+        </form>
+        
+        <ul class="task-list">
+            {% if tasks %}
+                {% for task in tasks %}
+                <li class="task-item {% if task.completed %}completed{% endif %}">
+                    <span class="task-content">{{ task.content }}</span>
+                    <div class="task-actions">
+                        <a href="/toggle/{{ task.id }}" class="complete-btn" title="Complete">✓</a>
+                        <a href="/delete/{{ task.id }}" class="delete-btn" title="Delete">✗</a>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No tasks yet. Add one above!</p>
+                </div>
+            {% endif %}
+        </ul>
+    </div>
+</body>
+</html>
